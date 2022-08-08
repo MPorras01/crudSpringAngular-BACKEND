@@ -11,7 +11,7 @@ public class Users {
     @Id
     @GeneratedValue
     @Column
-    private int id ;
+    private Integer id ;
     @Column()
     private int documentNumber ;
     @Column()
@@ -25,7 +25,7 @@ public class Users {
     public Users() {
     }
 
-    public Users(int id, int documentNumber, String name, String userName, String password) {
+    public Users(Integer id, int documentNumber, String name, String userName, String password) {
         this.id = id;
         this.documentNumber = documentNumber;
         this.name = name;
@@ -44,7 +44,7 @@ public class Users {
                 '}';
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

@@ -11,39 +11,68 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/user/")
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 
     @Autowired
     UserService userService;
 
-    @PostMapping("/saveUser")
-    public ResponseEntity<?> creaTorre(@RequestBody UserDto userDto){
+    /*  @PostMapping()
+      public ResponseEntity<?> createUser(@RequestBody UserDto userDto){
 
-        if(StringUtils.isBlank(userDto.getName()))
-            return new ResponseEntity(new Message("El nombre es obligatorio"), HttpStatus.BAD_REQUEST);
+          if(StringUtils.isBlank(userDto.getName()))
+              return new ResponseEntity(new Message("El nombre es obligatorio"), HttpStatus.BAD_REQUEST);
 
-       /* if(torreService.existsByNombreTorre(torreDto.getNombreTorre()))
-            return new ResponseEntity(new Mensaje("Ya existe una torre con ese nombre"), HttpStatus.BAD_REQUEST);*/
+          Users user = new Users(userDto.getDocumentNumber(), userDto.getDocumentNumber(), userDto.getUserName(), userDto.getUserName(), userDto.getPassword() );
 
-        Users user = new Users(userDto.getDocumentNumber(), userDto.getDocumentNumber(), userDto.getUserName(), userDto.getUserName(), userDto.getPassword() );
+          userService.saveUser(user);
 
-        userService.saveUser(user);
+          return new ResponseEntity(new Message("Usuario creado"), HttpStatus.OK);
+      }*/
+    @PostMapping()
+    public ResponseEntity<Users> saveUser(@RequestBody Users user) {
+        try {
+            Users usersSave = userService.save(user);
+            return ResponseEntity.created(new URI("/user/" + usersSave.getId())).body(usersSave);
 
-        return new ResponseEntity(new Message("Usario creado"), HttpStatus.OK);
+        } catch (Exception e) {
+            e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
     }
 
+
     @GetMapping()
-    public ResponseEntity<List<Users>> findAllUsers(){
+    public ResponseEntity<List<Users>> findAllUsers() {
 
         List<Users> users = userService.findAll();
 
         return new ResponseEntity<List<Users>>(users, HttpStatus.OK);
     }
 
+    @PutMapping
+    public ResponseEntity<Users> updateUser(@RequestBody Users user) {
+        try {
+            boolean existUser = userService.existUser(user);
 
+            if (existUser) {
 
+                Users usersSave = userService.save(user);
+                return ResponseEntity.created(new URI("/user/" + usersSave.getId())).body(usersSave);
+            }
+
+            return new ResponseEntity<Users>(user, HttpStatus.NOT_FOUND);
+
+        } catch (Exception e) {
+
+            e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 }
