@@ -37,8 +37,19 @@ public class UserService {
 
         return users;
     }
-    public boolean existUser(Users user) {
-        return iUserRepository.existsById(user.getId());
+    public boolean existUser(int id) {
+        return iUserRepository.existsById(id);
+    }
+
+    public void deleteUser(int id) {
+
+        iUserRepository.deleteById(id);
+    }
+
+    public Users findUserById(Integer id) {
+
+        Users user = iUserRepository.findById(id).orElse(null);
+        return user;
     }
 
 }
