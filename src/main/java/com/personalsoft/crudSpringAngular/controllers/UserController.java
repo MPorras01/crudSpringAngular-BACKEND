@@ -1,4 +1,5 @@
 package com.personalsoft.crudSpringAngular.controllers;
+import com.personalsoft.crudSpringAngular.models.UserDtoLogin;
 import com.personalsoft.crudSpringAngular.models.Users;
 import com.personalsoft.crudSpringAngular.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user/")
@@ -44,8 +46,8 @@ public class UserController {
 
             if (existUser) {
 
-                Users usersSave = userService.save(user);
-                return ResponseEntity.created(new URI("/user/" + usersSave.getId())).body(usersSave);
+                Users userUpdate = userService.save(user);
+                return ResponseEntity.created(new URI("/user/" + userUpdate.getId())).body(userUpdate);
             }
 
             return new ResponseEntity<Users>(user, HttpStatus.NOT_FOUND);
@@ -78,5 +80,13 @@ public class UserController {
         }
     }
 
+    @PostMapping("login")
+    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody UserDtoLogin userDtoLogin) {
+
+            Map<String, Object> usersSave = userService.findUserByUserName(userDtoLogin);
+
+            return ResponseEntity.ok(usersSave);
+
+    }
 
 }

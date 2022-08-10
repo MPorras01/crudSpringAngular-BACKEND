@@ -1,12 +1,18 @@
 package com.personalsoft.crudSpringAngular.services;
 
+import com.personalsoft.crudSpringAngular.exception.ResourceNotFoundException;
+import com.personalsoft.crudSpringAngular.models.Message;
+import com.personalsoft.crudSpringAngular.models.UserDtoLogin;
 import com.personalsoft.crudSpringAngular.models.Users;
 import com.personalsoft.crudSpringAngular.repositories.IUserRepository;
+import jdk.nashorn.internal.runtime.regexp.joni.ast.StringNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -50,6 +56,27 @@ public class UserService {
 
         Users user = iUserRepository.findById(id).orElse(null);
         return user;
+    }
+
+    public  Map<String, Object> findUserByUserName(UserDtoLogin userDtoLogin) throws ResourceNotFoundException {
+
+        Optional<Users> user = iUserRepository.findByUserName(userDtoLogin.getUserName());
+        String password =  userDtoLogin.getPassword();
+        Message message = new Message("");
+
+        if(!user.isPresent()){
+            throw new ResourceNotFoundException("El usuario no existe");
+        }
+        if(!password.equals(user.get().getPassword()) ){
+            throw new ResourceNotFoundException("La contraseña no coinciden");
+        }
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("Mensaje", "Login existoso");
+        response.put("Status", 200);
+
+        return response;
     }
 
 }
